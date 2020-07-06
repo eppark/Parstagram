@@ -4,6 +4,17 @@
 
     <item
         android:id="@+id/action_home"
+        android:icon="@drawable/instagram_home_outline"
         android:title="Home"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_compose"
+        android:icon="@drawable/instagram_new_post_outline"
+        android:title="Compose"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/instagram_user_outline"
+        android:title="Profile"
         app:showAsAction="always" />
 </menu>
