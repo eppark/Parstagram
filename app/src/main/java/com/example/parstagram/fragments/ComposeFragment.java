@@ -29,13 +29,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.parstagram.BitmapScaler;
-import com.example.parstagram.MainActivity;
 import com.example.parstagram.Post;
 import com.example.parstagram.R;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -43,7 +40,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -86,7 +82,7 @@ public class ComposeFragment extends Fragment {
         // Setup handles to view objects
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
-        ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
+        ivPostImage = (ImageView) view.findViewById(R.id.ivImage);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {

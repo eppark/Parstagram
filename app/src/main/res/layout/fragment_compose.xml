@@ -21,7 +21,7 @@
         android:text="@string/take_a_photo" />
 
     <ImageView
-        android:id="@+id/ivPostImage"
+        android:id="@+id/ivImage"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         tools:srcCompat="@tools:sample/avatars" />

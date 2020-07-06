@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivPFP"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:layout_toEndOf="@+id/ivPFP"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="pepinouo"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/ivPFP"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageButton
+        android:id="@+id/ibtnLike"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="centerCrop"
+        android:tint="@color/blackPrimary"
+        app:srcCompat="@drawable/ufi_heart" />
+
+    <ImageButton
+        android:id="@+id/ibtnComment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/ibtnLike"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="centerCrop"
+        android:tint="@color/blackPrimary"
+        app:srcCompat="@drawable/ufi_comment" />
+
+    <ImageButton
+        android:id="@+id/ibtnShare"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@id/ibtnComment"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="centerCrop"
+        android:tint="@color/blackPrimary"
+        app:srcCompat="@drawable/direct" />
+
+    <TextView
+        android:id="@+id/tvUsernameComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ibtnLike"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
+        android:textStyle="bold"
+        tools:text="pepinouo" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ibtnComment"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/tvUsernameComment"
+        tools:text="Hello World!" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tvDescription"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider" />
+</RelativeLayout>

@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name=".ParseApplication"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
 
         <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
