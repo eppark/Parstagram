@@ -7,10 +7,10 @@
 
     <ImageView
         android:id="@+id/ivPFP"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:layout_toEndOf="@+id/ivPFP"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         tools:text="pepinouo"
         tools:visibility="visible" />
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_below="@+id/ivPFP"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -40,7 +40,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/ivImage"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="centerCrop"
         android:tint="@color/blackPrimary"
@@ -52,7 +52,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/ivImage"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/ibtnLike"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="centerCrop"
@@ -65,7 +65,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/ivImage"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@id/ibtnComment"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="centerCrop"
