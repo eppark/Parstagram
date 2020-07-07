@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.activities.MainActivity;
+import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
 import com.parse.ParseFile;
@@ -52,6 +54,15 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+
+            // When the user clicks on the post, take them to the details page for that post
+            View.OnClickListener detailsListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) context).fragmentManager.beginTransaction().replace(R.id.flContainer, DetailsFragment.newInstance(currentPost)).commit();
+                }
+            };
+            ivImage.setOnClickListener(detailsListener);
         }
 
         public void bind(Post post) {

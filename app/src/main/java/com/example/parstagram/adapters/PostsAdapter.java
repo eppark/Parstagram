@@ -1,6 +1,9 @@
 package com.example.parstagram.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +16,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.TimeFormatter;
 import com.example.parstagram.activities.MainActivity;
+import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -57,10 +61,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private ImageView ivPFP;
         private ImageView ivImage;
         private TextView tvUsernameComment;
-        private TextView tvDescription;
         private ImageButton ibtnLike;
         private ImageButton ibtnComment;
         private ImageButton ibtnShare;
+        private TextView tvTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -68,10 +72,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivPFP = (ImageView) itemView.findViewById(R.id.ivPFP);
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
             tvUsernameComment = (TextView) itemView.findViewById(R.id.tvUsernameComment);
-            tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             ibtnLike = (ImageButton) itemView.findViewById(R.id.ibtnLike);
             ibtnComment = (ImageButton) itemView.findViewById(R.id.ibtnComment);
             ibtnShare = (ImageButton) itemView.findViewById(R.id.ibtnShare);
+            tvTime = (TextView) itemView.findViewById(R.id.tvTime);
 
             // When the user clicks on text or a profile picture, take them to the profile page for that user
             View.OnClickListener profileListener = new View.OnClickListener() {
@@ -83,14 +87,33 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             };
             tvUsername.setOnClickListener(profileListener);
             ivPFP.setOnClickListener(profileListener);
+
+            // When the user clicks on the post, take them to the details page for that post
+            View.OnClickListener detailsListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) context).fragmentManager.beginTransaction().replace(R.id.flContainer, DetailsFragment.newInstance(currentPost)).commit();
+                }
+            };
+            ivImage.setOnClickListener(detailsListener);
+            tvUsernameComment.setOnClickListener(detailsListener);
+            tvTime.setOnClickListener(detailsListener);
         }
 
         public void bind(Post post) {
             currentPost = post;
             tvUsername.setText(post.getUser().getUsername());
-            tvUsernameComment.setText(tvUsername.getText());
-            tvDescription.setText(post.getDescription());
 
+            // Set the username bold and description not bold
+            SpannableString str =  new SpannableString(tvUsername.getText());
+            str.setSpan(new StyleSpan(Typeface.BOLD), 0, str.length(), 0);
+            tvUsernameComment.setText(str);
+            tvUsernameComment.append("  " + post.getDescription());
+
+            // Set the time to the correct format
+            tvTime.setText(TimeFormatter.getTimeDifference(post.getCreatedAt().toString()));
+
+            // Set the images if we have them
             ParseFile image = post.getImage();
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);

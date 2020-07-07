@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/ivPFP"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         tools:srcCompat="@tools:sample/avatars" />
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="20dp"
         android:layout_toEndOf="@+id/ivPFP"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -77,26 +77,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ibtnLike"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
-        android:textStyle="bold"
+        android:layout_marginEnd="16dp"
+        android:minLines="1"
         tools:text="pepinouo" />
 
     <TextView
-        android:id="@+id/tvDescription"
+        android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ibtnComment"
-        android:layout_marginStart="8dp"
+        android:layout_below="@+id/tvUsernameComment"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/tvUsernameComment"
-        tools:text="Hello World!" />
+        android:textColor="#979797"
+        android:textSize="12sp"
+        tools:text="18h" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/tvDescription"
+        android:layout_below="@+id/tvTime"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider" />

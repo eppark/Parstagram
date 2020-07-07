@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class ProfileFragment extends Fragment {
     protected ParseUser user;
     TextView tvUsername;
     ImageView ivPFP;
+    Button btnLogout;
 
     private File photoFile;
     private String photoFileName = "pfp.jpg";
@@ -97,8 +99,14 @@ public class ProfileFragment extends Fragment {
         rvPosts = (RecyclerView) view.findViewById(R.id.rvPosts);
         tvUsername = (TextView) view.findViewById(R.id.tvUsername);
         ivPFP = (ImageView) view.findViewById(R.id.ivPFP);
+        btnLogout = (Button) view.findViewById(R.id.btnLogout);
 
         user = Parcels.unwrap(getArguments().getParcelable("user"));
+        if (user != ParseUser.getCurrentUser()) {
+            btnLogout.setVisibility(View.GONE);
+        } else  {
+            btnLogout.setVisibility(View.VISIBLE);
+        }
         tvUsername.setText(user.getUsername());
 
         ParseFile image = user.getParseFile("pfp");
@@ -118,6 +126,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 launchCamera();
+            }
+        });
+
+        // Log the user out when the button is pressed
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUser.logOut();
             }
         });
 
