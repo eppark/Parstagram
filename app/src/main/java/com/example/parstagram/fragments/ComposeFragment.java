@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.parstagram.BitmapScaler;
-import com.example.parstagram.Post;
+import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -110,7 +110,6 @@ public class ComposeFragment extends Fragment {
             }
         });
     }
-
 
     private void launchCamera() {
         if (!checkPermission()) {

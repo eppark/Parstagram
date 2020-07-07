@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.parstagram.Post;
-import com.example.parstagram.PostsAdapter;
+import com.example.parstagram.models.Post;
+import com.example.parstagram.adapters.PostsAdapter;
 import com.example.parstagram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;

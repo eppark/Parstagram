@@ -9,18 +9,18 @@
         android:id="@+id/ivPFP"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
         android:layout_toEndOf="@+id/ivPFP"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         tools:text="pepinouo"
         tools:visibility="visible" />
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_below="@+id/ivPFP"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 
