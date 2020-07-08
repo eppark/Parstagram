@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
         setContentView(view);
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitleTextAppearance(this, R.style.InstagramTextAppearance);
+        getSupportActionBar().setTitle("Instagram");
         binding.toolbar.setTitle("Instagram");
 
         // Set the bottom navigation view
