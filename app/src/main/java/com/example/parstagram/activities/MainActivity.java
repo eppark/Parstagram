@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
         View view = binding.getRoot();
         setContentView(view);
         setSupportActionBar(binding.toolbar);
-        binding.toolbar.setTitle("Instagram");
         binding.toolbar.setTitleTextAppearance(this, R.style.InstagramTextAppearance);
+        binding.toolbar.setTitle("Instagram");
 
         // Set the bottom navigation view
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,6 +71,6 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
     @Override
     public void onFinishCommentDialog(Comment comment) {
         ((DetailsFragment) fragmentManager.getFragments().get(1)).allComments.add(0, comment);
-        ((DetailsFragment) fragmentManager.getFragments().get(1)).adapter.notifyItemInserted(0);
+        ((DetailsFragment) fragmentManager.getFragments().get(1)).adapter.notifyDataSetChanged();
     }
 }

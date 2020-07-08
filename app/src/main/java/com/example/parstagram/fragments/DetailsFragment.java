@@ -36,6 +36,7 @@ import com.parse.ParseUser;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -180,7 +181,9 @@ public class DetailsFragment extends Fragment {
         });
 
         // Get comments
-        queryComments();
+        if (allComments.isEmpty()) {
+            queryComments();
+        }
     }
 
     // Query comments from database
@@ -201,6 +204,9 @@ public class DetailsFragment extends Fragment {
                 }
                 Log.d(TAG, "Query comments success!");
                 allComments.addAll(comments);
+                LinkedHashSet<Comment> temp = new LinkedHashSet<>(allComments);
+                allComments.clear();
+                allComments.addAll(temp); // Remove duplicates
                 adapter.notifyDataSetChanged();
                 skip += comments.size(); // Skip the next values next time
             }
