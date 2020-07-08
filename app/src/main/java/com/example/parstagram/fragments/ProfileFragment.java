@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.parstagram.BitmapScaler;
 import com.example.parstagram.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.adapters.ImagesAdapter;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
@@ -171,7 +172,11 @@ public class ProfileFragment extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Log the user out of the database and go back to the login screen
                 ParseUser.logOut();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
             }
         });
 

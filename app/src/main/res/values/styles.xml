@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/whitePrimary</item>
         <item name="colorPrimaryDark">@color/blackPrimary</item>
@@ -8,6 +8,11 @@
         <item name="titleTextColor">@color/blackPrimary</item>
         <item name="android:textColor">@color/blackPrimary</item>
         <item name="actionMenuTextColor">@color/blackPrimary</item>
+    </style>
+
+    <style name="InstagramTextAppearance">
+        <item name="android:fontFamily">@font/instagram</item>
+        <item name="android:textSize">28sp</item>
     </style>
 
 </resources>

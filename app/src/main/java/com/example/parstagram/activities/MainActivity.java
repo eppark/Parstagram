@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
+        setSupportActionBar(binding.toolbar);
+        binding.toolbar.setTitle("Instagram");
+        binding.toolbar.setTitleTextAppearance(this, R.style.InstagramTextAppearance);
 
         // Set the bottom navigation view
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
