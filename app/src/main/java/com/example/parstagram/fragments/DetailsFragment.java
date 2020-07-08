@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,15 +46,17 @@ import java.util.List;
 public class DetailsFragment extends Fragment {
 
     public static final String TAG = DetailsFragment.class.getSimpleName();
-    protected RecyclerView rvComments;
-    protected CommentsAdapter adapter;
-    protected List<Comment> allComments;
+    public RecyclerView rvComments;
+    public CommentsAdapter adapter;
+    public List<Comment> allComments;
     protected Post post;
     TextView tvUsername;
     ImageView ivPFP;
     TextView tvTime;
     TextView tvUsernameComment;
     ImageView ivImage;
+    ImageButton ibtnLike;
+    ImageButton ibtnComment;
     int skip;
 
     // Swipe to refresh and scroll to load more comments endlessly
@@ -93,6 +96,8 @@ public class DetailsFragment extends Fragment {
         tvTime = (TextView) view.findViewById(R.id.tvTime);
         tvUsernameComment = (TextView) view.findViewById(R.id.tvUsernameComment);
         ivImage = (ImageView) view.findViewById(R.id.ivImage);
+        ibtnComment = (ImageButton) view.findViewById(R.id.ibtnComment);
+        ibtnLike = (ImageButton) view.findViewById(R.id.ibtnLike);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         skip = 0;
 
@@ -165,6 +170,15 @@ public class DetailsFragment extends Fragment {
         // Adds the scroll listener to RecyclerView
         rvComments.addOnScrollListener(scrollListener);
 
+        // Set comment listener
+        ibtnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CommentDialogFragment commentDialogFragment = CommentDialogFragment.newInstance(post);
+                commentDialogFragment.show(((MainActivity) view.getContext()).fragmentManager, "fragment_comment_dialog");
+            }
+        });
+
         // Get comments
         queryComments();
     }
@@ -176,7 +190,7 @@ public class DetailsFragment extends Fragment {
         query.setSkip(skip);
         query.whereEqualTo(Comment.KEY_OPOST, post);
         query.setLimit(20); // Only show 20 comments
-        query.addAscendingOrder(Comment.KEY_CREATED_AT);
+        query.addDescendingOrder(Comment.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Comment>() {
             @Override
             public void done(List<Comment> comments, ParseException e) {

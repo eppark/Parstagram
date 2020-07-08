@@ -247,6 +247,7 @@ public class ComposeFragment extends Fragment {
         post.setDescription(description);
         post.setUser(currentUser);
         post.setImage(new ParseFile(photoFile));
+        post.resetLikes();
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -256,6 +257,7 @@ public class ComposeFragment extends Fragment {
                     return;
                 }
                 Log.i(TAG, "Post save success!");
+                Toast.makeText(getContext(), "Shared post", Toast.LENGTH_SHORT).show();
                 etDescription.setText(""); // Ensure they don't try to save the same post twice
                 ivPostImage.setImageResource(0);
             }

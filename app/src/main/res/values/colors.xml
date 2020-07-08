@@ -6,4 +6,6 @@
     <color name="blackPrimary">#12181D</color>
     <color name="whitePrimary">#FFFFFF</color>
     <color name="InstagramBlue">#4c68d7</color>
+    <color name="LightBlue">#9EAFF3</color>
+    <color name="InstagramRed">#FD1D1D</color>
 </resources>

@@ -74,7 +74,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             tvUsername.append("  " + comment.getDescription());
 
             // Set the time to the correct format
-            tvTime.setText(TimeFormatter.getTimeDifference(comment.getCreatedAt().toString()));
+            if (comment.getCreatedAt() != null) {
+                tvTime.setText(TimeFormatter.getTimeDifference(comment.getCreatedAt().toString()));
+            } else {
+                tvTime.setText("Just now");
+            }
 
             // Put in the image
             ParseFile image = currentComment.getUser().getParseFile("pfp");

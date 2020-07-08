@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +22,11 @@ import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
+import org.json.JSONException;
+
+import java.io.File;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
@@ -65,6 +68,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private ImageButton ibtnComment;
         private ImageButton ibtnShare;
         private TextView tvTime;
+        private boolean liked;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -98,6 +102,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivImage.setOnClickListener(detailsListener);
             tvUsernameComment.setOnClickListener(detailsListener);
             tvTime.setOnClickListener(detailsListener);
+            ibtnComment.setOnClickListener(detailsListener);
+
+            // When the user clicks the heart, change accordingly
+            ibtnLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!liked) {
+                        currentPost.addLike(ParseUser.getCurrentUser().getObjectId());
+                        addLike();
+                    } else {
+                        currentPost.removeLike(ParseUser.getCurrentUser().getObjectId());
+                        removeLike();
+                    }
+                }
+            });
         }
 
         public void bind(Post post) {
@@ -124,6 +143,31 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             } else {
                 Glide.with(context).load(R.drawable.default_pfp).circleCrop().into(ivPFP);
             }
+
+            // Show if the user likes the post
+            try {
+                if (post.getLikes().contains(ParseUser.getCurrentUser().getObjectId())) {
+                    addLike();
+                } else {
+                    removeLike();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void addLike() {
+            liked = true;
+            ibtnLike.setSelected(true);
+            ibtnLike.setColorFilter(R.color.InstagramRed);
+            ibtnLike.setImageResource(R.drawable.ufi_heart_active);
+        }
+
+        private void removeLike() {
+            liked = false;
+            ibtnLike.setSelected(false);
+            ibtnLike.setColorFilter(R.color.blackPrimary);
+            ibtnLike.setImageResource(R.drawable.ufi_heart);
         }
     }
 

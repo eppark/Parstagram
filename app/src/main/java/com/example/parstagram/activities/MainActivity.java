@@ -6,18 +6,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ActivityMainBinding;
+import com.example.parstagram.fragments.CommentDialogFragment;
 import com.example.parstagram.fragments.ComposeFragment;
+import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.fragments.PostsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
+import com.example.parstagram.models.Comment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CommentDialogFragment.CommentDialogFragmentListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -58,5 +62,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default selection
         binding.bottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
+    // When returning from the comment dialog, show it on the feed
+    @Override
+    public void onFinishCommentDialog(Comment comment) {
+        ((DetailsFragment) fragmentManager.getFragments().get(1)).allComments.add(0, comment);
+        ((DetailsFragment) fragmentManager.getFragments().get(1)).adapter.notifyItemInserted(0);
     }
 }
