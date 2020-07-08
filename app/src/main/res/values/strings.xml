@@ -8,5 +8,6 @@
     <string name="share">Share</string>
 
     <string name="logout">LOGOUT</string>
+    <string name="sign_up">Sign up</string>
 
 </resources>

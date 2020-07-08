@@ -12,6 +12,7 @@ import com.example.parstagram.databinding.ActivityLoginBinding;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,6 +43,16 @@ public class LoginActivity extends AppCompatActivity {
                 loginUser(username, password);
             }
         });
+
+        binding.btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick signup button");
+                String username = binding.etUsername.getText().toString();
+                String password = binding.etPassword.getText().toString();
+                signupUser(username, password);
+            }
+        });
     }
 
     private void loginUser(String username, String password) {
@@ -57,6 +68,28 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 goMainActivity();
                 Toast.makeText(LoginActivity.this, "Login success.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void signupUser(String username, String password) {
+        Log.i(TAG, "Attempting to signup user...");
+        // Create the ParseUser
+        ParseUser user = new ParseUser();
+        // Set core properties
+        user.setUsername(username);
+        user.setPassword(password);
+        // Invoke signUpInBackground
+        user.signUpInBackground(new SignUpCallback() {
+            public void done(ParseException e) {
+                if (e != null) {
+                    // There was an error
+                    Log.e(TAG, "Issue with signup", e);
+                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                goMainActivity();
+                Toast.makeText(LoginActivity.this, "Signup success.", Toast.LENGTH_SHORT).show();
             }
         });
     }
