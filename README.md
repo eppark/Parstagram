@@ -24,7 +24,7 @@ The following **stretch** features are implemented:
 - [x] User should switch between different tabs - viewing all posts (feed view), capture (camera and photo gallery view) and profile tabs (posts made) using fragments and a Bottom Navigation View.
 - [x] User can load more posts once he or she reaches the bottom of the feed using endless scrolling.
 - [x] Show the username and creation time for each post
-- [ ] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse
+- [x] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse
 - User Profiles:
   - [x] Allow the logged in user to add a profile photo
   - [x] Display the profile photo with each post
@@ -35,7 +35,10 @@ The following **stretch** features are implemented:
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [x] Users can tap a post on a profile page to see its details.
+- [x] User can pull to refresh the last 20 comments on a post in its details
+- [x] User can load more comments once he or she reaches the bottom of the post details page using endless scrolling.
+- [x] User can post a comment via dialog fragment
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
