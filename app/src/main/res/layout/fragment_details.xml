@@ -59,7 +59,6 @@
                     android:layout_marginTop="8dp"
                     android:backgroundTint="#00FFFFFF"
                     android:scaleType="centerCrop"
-                    android:tint="@color/blackPrimary"
                     app:srcCompat="@drawable/ufi_heart" />
 
                 <ImageButton

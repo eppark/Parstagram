@@ -59,6 +59,7 @@ public class DetailsFragment extends Fragment {
     ImageButton ibtnLike;
     ImageButton ibtnComment;
     int skip;
+    boolean liked;
 
     // Swipe to refresh and scroll to load more comments endlessly
     private SwipeRefreshLayout swipeContainer;
@@ -184,6 +185,10 @@ public class DetailsFragment extends Fragment {
         if (allComments.isEmpty()) {
             queryComments();
         }
+
+        // See if the user liked the post
+        liked = false;
+        queryLiked();
     }
 
     // Query comments from database
@@ -211,5 +216,40 @@ public class DetailsFragment extends Fragment {
                 skip += comments.size(); // Skip the next values next time
             }
         });
+    }
+
+    // Query if the post is liked from database
+    protected void queryLiked() {
+        post.getLikes().getQuery().findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> users, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting likes", e);
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d(TAG, "Query likes success!");
+                // If the user liked the post, show that. Otherwise, show the post is not liked
+                removeLike();
+                for(int i = 0; i < users.size(); i++) {
+                    if(users.get(i).getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                        addLike();
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    private void addLike() {
+        liked = true;
+        ibtnLike.setSelected(true);
+        ibtnLike.setImageResource(R.drawable.ufi_heart_active);
+    }
+
+    private void removeLike() {
+        liked = false;
+        ibtnLike.setSelected(false);
+        ibtnLike.setImageResource(R.drawable.ufi_heart);
     }
 }

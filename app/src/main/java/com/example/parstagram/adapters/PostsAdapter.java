@@ -1,15 +1,18 @@
 package com.example.parstagram.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,16 +24,21 @@ import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
 
-import java.io.File;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
+    private static final String TAG = PostsAdapter.class.getSimpleName();
     private Context context;
     private List<Post> posts;
 
@@ -109,10 +117,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     if (!liked) {
-                        currentPost.addLike(ParseUser.getCurrentUser().getObjectId());
+                        currentPost.addLike();
                         addLike();
                     } else {
-                        currentPost.removeLike(ParseUser.getCurrentUser().getObjectId());
+                        currentPost.removeLike();
                         removeLike();
                     }
                 }
@@ -145,28 +153,41 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             }
 
             // Show if the user likes the post
-            try {
-                if (post.getLikes().contains(ParseUser.getCurrentUser().getObjectId())) {
-                    addLike();
-                } else {
+            queryLiked();
+        }
+
+        // Query if the post is liked from database
+        protected void queryLiked() {
+            currentPost.getLikes().getQuery().findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> users, ParseException e) {
+                    if (e != null) {
+                        Log.e(TAG, "Issue with getting likes", e);
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Log.d(TAG, "Query likes success!");
+                    // If the user liked the post, show that. Otherwise, show the post is not liked
                     removeLike();
+                    for(int i = 0; i < users.size(); i++) {
+                        if(users.get(i).getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                            addLike();
+                            break;
+                        }
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            });
         }
 
         private void addLike() {
             liked = true;
             ibtnLike.setSelected(true);
-            ibtnLike.setColorFilter(R.color.InstagramRed);
             ibtnLike.setImageResource(R.drawable.ufi_heart_active);
         }
 
         private void removeLike() {
             liked = false;
             ibtnLike.setSelected(false);
-            ibtnLike.setColorFilter(R.color.blackPrimary);
             ibtnLike.setImageResource(R.drawable.ufi_heart);
         }
     }

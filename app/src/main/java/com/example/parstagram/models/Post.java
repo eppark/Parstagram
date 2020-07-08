@@ -5,12 +5,8 @@ import android.util.Log;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.util.ArrayList;
 
 @ParseClassName("Post")
 public class Post extends ParseObject {
@@ -46,30 +42,21 @@ public class Post extends ParseObject {
         put(KEY_USER, parseUser);
     }
 
-    public void resetLikes() { put(KEY_LIKES, new JSONArray()); }
-
-    public ArrayList<String> getLikes() throws JSONException {
-        ArrayList<String> likeslist = new ArrayList<String>();
-        JSONArray jArray = (JSONArray) getJSONArray(KEY_LIKES);
-        if (jArray != null) {
-            for (int i = 0; i < jArray.length(); i++) {
-                likeslist.add(jArray.getString(i));
-            }
-        }
-        return likeslist;
+    public ParseRelation<ParseUser> getLikes() {
+        return getRelation(KEY_LIKES);
     }
 
-    public void addLike(String user) {
-        add(KEY_LIKES, user);
+    public void addLike() {
+        getLikes().add(ParseUser.getCurrentUser());
+        saveInBackground();
     }
 
-    public void removeLike(String user) {
-        try {
-            ArrayList<String> likes = getLikes();
-            likes.remove(user);
-            put(KEY_LIKES, likes);
-        } catch (JSONException e) {
-            Log.e(TAG, "JSON exception when removing like", e);
-        }
+    public void removeLike() {
+        getLikes().remove(ParseUser.getCurrentUser());
+        saveInBackground();
+    }
+
+    public void resetLikes() {
+        put(KEY_LIKES, new ParseRelation[0]);
     }
 }
