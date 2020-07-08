@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.parstagram.BitmapScaler;
@@ -52,6 +53,7 @@ public class ComposeFragment extends Fragment {
     private Button btnCaptureImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
+    private ProgressBar pbLoading;
 
     private File photoFile;
     private String photoFileName = "photo.jpg";
@@ -84,6 +86,8 @@ public class ComposeFragment extends Fragment {
         btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
         ivPostImage = (ImageView) view.findViewById(R.id.ivImage);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
+        pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
+        pbLoading.setVisibility(View.INVISIBLE); // Hide the progress bar at first
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,37 +197,13 @@ public class ComposeFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                try {
-                    takenImage = resizeBitmap(takenImage);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error resizing photo!", e);
-                }
                 // Load the taken image into a preview
                 ivPostImage.setImageBitmap(takenImage);
+                photoFile = getPhotoFileUri(photoFileName);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private Bitmap resizeBitmap(Bitmap takenImage) throws IOException {
-        // See BitmapScaler.java: https://gist.github.com/nesquena/3885707fd3773c09f1bb
-        Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 50);
-        // Configure byte output stream
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        // Compress the image further
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-        // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
-        String resizedFileName = "resized_" + photoFileName;
-        File resizedFile = getPhotoFileUri(resizedFileName);
-        resizedFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(resizedFile);
-        // Write the bytes of the bitmap to file
-        fos.write(bytes.toByteArray());
-        fos.close();
-        photoFileName = resizedFileName;
-        photoFile = getPhotoFileUri(photoFileName);
-        return resizedBitmap;
     }
 
     // Returns the File for a photo stored on disk given the fileName
@@ -243,6 +223,7 @@ public class ComposeFragment extends Fragment {
     }
 
     private void savePost(String description, ParseUser currentUser, File photoFile) {
+        pbLoading.setVisibility(View.VISIBLE);
         Post post = new Post();
         post.setDescription(description);
         post.setUser(currentUser);
@@ -254,12 +235,14 @@ public class ComposeFragment extends Fragment {
                 if (e != null) {
                     Log.e(TAG, "Error while saving", e);
                     Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
+                    pbLoading.setVisibility(View.INVISIBLE);
                     return;
                 }
                 Log.i(TAG, "Post save success!");
                 Toast.makeText(getContext(), "Shared post", Toast.LENGTH_SHORT).show();
                 etDescription.setText(""); // Ensure they don't try to save the same post twice
                 ivPostImage.setImageResource(0);
+                pbLoading.setVisibility(View.INVISIBLE);
             }
         });
     }

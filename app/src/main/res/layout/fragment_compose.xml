@@ -23,7 +23,8 @@
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
@@ -32,5 +33,15 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="@string/share" />
+
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:progressTint="@color/InstagramBlue"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
 </LinearLayout>

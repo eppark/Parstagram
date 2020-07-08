@@ -290,39 +290,14 @@ public class ProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                try {
-                    takenImage = resizeBitmap(takenImage);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error resizing photo!", e);
-                }
                 // Load the taken image into a preview
                 Glide.with(this).load(takenImage).circleCrop().into(ivPFP);
-
+                photoFile = getPhotoFileUri(photoFileName);
                 savePFP(photoFile);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private Bitmap resizeBitmap(Bitmap takenImage) throws IOException {
-        // See BitmapScaler.java: https://gist.github.com/nesquena/3885707fd3773c09f1bb
-        Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 50);
-        // Configure byte output stream
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        // Compress the image further
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-        // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
-        String resizedFileName = "resized_" + photoFileName;
-        File resizedFile = getPhotoFileUri(resizedFileName);
-        resizedFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(resizedFile);
-        // Write the bytes of the bitmap to file
-        fos.write(bytes.toByteArray());
-        fos.close();
-        photoFileName = resizedFileName;
-        photoFile = getPhotoFileUri(photoFileName);
-        return resizedBitmap;
     }
 
     // Returns the File for a photo stored on disk given the fileName
