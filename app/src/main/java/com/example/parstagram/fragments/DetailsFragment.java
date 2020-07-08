@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.R;
 import com.example.parstagram.TimeFormatter;
 import com.example.parstagram.activities.MainActivity;
@@ -52,6 +54,11 @@ public class DetailsFragment extends Fragment {
     TextView tvTime;
     TextView tvUsernameComment;
     ImageView ivImage;
+    int skip;
+
+    // Swipe to refresh and scroll to load more comments endlessly
+    private SwipeRefreshLayout swipeContainer;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -86,6 +93,8 @@ public class DetailsFragment extends Fragment {
         tvTime = (TextView) view.findViewById(R.id.tvTime);
         tvUsernameComment = (TextView) view.findViewById(R.id.tvUsernameComment);
         ivImage = (ImageView) view.findViewById(R.id.ivImage);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        skip = 0;
 
         post = Parcels.unwrap(getArguments().getParcelable("post"));
         ParseUser op = post.getUser();
@@ -117,7 +126,8 @@ public class DetailsFragment extends Fragment {
         allComments = new ArrayList<>();
         adapter = new CommentsAdapter(getContext(), allComments);
         rvComments.setAdapter(adapter);
-        rvComments.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvComments.setLayoutManager(linearLayoutManager);
 
         // When the user clicks on text or a profile picture, take them to the profile page for that user
         View.OnClickListener profileListener = new View.OnClickListener() {
@@ -129,6 +139,32 @@ public class DetailsFragment extends Fragment {
         tvUsername.setOnClickListener(profileListener);
         ivPFP.setOnClickListener(profileListener);
 
+        // Set the refresher
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                skip = 0;
+                queryComments();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(R.color.blackPrimary);
+
+        // Retain an instance for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryComments();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvComments.addOnScrollListener(scrollListener);
+
         // Get comments
         queryComments();
     }
@@ -137,9 +173,10 @@ public class DetailsFragment extends Fragment {
     protected void queryComments() {
         ParseQuery<Comment> query = ParseQuery.getQuery(Comment.class);
         query.include(Comment.KEY_USER);
+        query.setSkip(skip);
         query.whereEqualTo(Comment.KEY_OPOST, post);
-        query.setLimit(20); // Only show 20 posts
-        query.addDescendingOrder(Comment.KEY_CREATED_AT);
+        query.setLimit(20); // Only show 20 comments
+        query.addAscendingOrder(Comment.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Comment>() {
             @Override
             public void done(List<Comment> comments, ParseException e) {
@@ -151,6 +188,7 @@ public class DetailsFragment extends Fragment {
                 Log.d(TAG, "Query comments success!");
                 allComments.addAll(comments);
                 adapter.notifyDataSetChanged();
+                skip += comments.size(); // Skip the next values next time
             }
         });
     }

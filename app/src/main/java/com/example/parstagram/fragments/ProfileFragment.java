@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.parstagram.BitmapScaler;
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.adapters.ImagesAdapter;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.R;
@@ -65,6 +67,11 @@ public class ProfileFragment extends Fragment {
     TextView tvUsername;
     ImageView ivPFP;
     Button btnLogout;
+    int skip;
+
+    // Swipe to refresh and scroll to load more posts endlessly
+    private SwipeRefreshLayout swipeContainer;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     private File photoFile;
     private String photoFileName = "pfp.jpg";
@@ -100,7 +107,10 @@ public class ProfileFragment extends Fragment {
         tvUsername = (TextView) view.findViewById(R.id.tvUsername);
         ivPFP = (ImageView) view.findViewById(R.id.ivPFP);
         btnLogout = (Button) view.findViewById(R.id.btnLogout);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        skip = 0;
 
+        // Show the logout button if it's the current user
         user = Parcels.unwrap(getArguments().getParcelable("user"));
         if (user != ParseUser.getCurrentUser()) {
             btnLogout.setVisibility(View.GONE);
@@ -109,6 +119,7 @@ public class ProfileFragment extends Fragment {
         }
         tvUsername.setText(user.getUsername());
 
+        // Show the profile pic if the user has one
         ParseFile image = user.getParseFile("pfp");
         if (image != null) {
             Glide.with(this).load(image.getUrl()).circleCrop().into(ivPFP);
@@ -120,7 +131,8 @@ public class ProfileFragment extends Fragment {
         allPosts = new ArrayList<>();
         adapter = new ImagesAdapter(getContext(), allPosts);
         rvPosts.setAdapter(adapter);
-        rvPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
+        rvPosts.setLayoutManager(gridLayoutManager);
 
         ivPFP.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +140,32 @@ public class ProfileFragment extends Fragment {
                 launchCamera();
             }
         });
+
+        // Set the refresher
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                skip = 0;
+                queryPosts();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(R.color.blackPrimary);
+
+        // Retain an instance for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryPosts();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvPosts.addOnScrollListener(scrollListener);
 
         // Log the user out when the button is pressed
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +183,7 @@ public class ProfileFragment extends Fragment {
     protected void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
+        query.setSkip(skip);
         query.whereEqualTo(Post.KEY_USER, user);
         query.setLimit(20); // Only show 20 posts
         query.addDescendingOrder(Post.KEY_CREATED_AT);
@@ -159,6 +198,7 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "Query posts success!");
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                skip += posts.size(); // Skip the next values next time
             }
         });
     }

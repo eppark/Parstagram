@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.adapters.PostsAdapter;
@@ -30,9 +31,11 @@ public class PostsFragment extends Fragment {
     protected RecyclerView rvPosts;
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
+    int skip;
 
+    // Swipe to refresh and endless scrolling
     private SwipeRefreshLayout swipeContainer;
-
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public PostsFragment() {
         // Required empty public constructor
@@ -60,7 +63,9 @@ public class PostsFragment extends Fragment {
         allPosts = new ArrayList<>();
         adapter = new PostsAdapter(getContext(), allPosts);
         rvPosts.setAdapter(adapter);
-        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvPosts.setLayoutManager(linearLayoutManager);
+        skip = 0;
 
         // Set the refresher
         // Setup refresh listener which triggers new data loading
@@ -68,6 +73,7 @@ public class PostsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 adapter.clear();
+                skip = 0;
                 queryPosts();
                 swipeContainer.setRefreshing(false);
             }
@@ -75,7 +81,19 @@ public class PostsFragment extends Fragment {
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(R.color.blackPrimary);
 
-        // Get posts
+        // Retain an instance for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryPosts();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvPosts.addOnScrollListener(scrollListener);
+
+        // Get posts initially
         queryPosts();
     }
 
@@ -83,6 +101,7 @@ public class PostsFragment extends Fragment {
     protected void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
+        query.setSkip(skip);
         query.setLimit(20); // Only show 20 posts
         query.addDescendingOrder(Post.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
@@ -96,6 +115,7 @@ public class PostsFragment extends Fragment {
                 Log.d(TAG, "Query posts success!");
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                skip += posts.size(); // Skip the next values next time
             }
         });
     }

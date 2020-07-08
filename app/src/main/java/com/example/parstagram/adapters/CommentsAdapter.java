@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
 import com.example.parstagram.TimeFormatter;
 import com.example.parstagram.models.Comment;
+import com.example.parstagram.models.Post;
 import com.parse.ParseFile;
 
 import java.util.List;
@@ -83,5 +84,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
                 Glide.with(context).load(R.drawable.default_pfp).circleCrop().into(ivPFP);
             }
         }
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        comments.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<Comment> list) {
+        comments.addAll(list);
+        notifyDataSetChanged();
     }
 }
