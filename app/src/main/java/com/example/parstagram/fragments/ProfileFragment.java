@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,7 @@ public class ProfileFragment extends Fragment {
     TextView tvUsername;
     ImageView ivPFP;
     Button btnLogout;
+    ProgressBar pbLoading;
     int skip;
 
     // Swipe to refresh and scroll to load more posts endlessly
@@ -105,6 +107,8 @@ public class ProfileFragment extends Fragment {
         ivPFP = (ImageView) view.findViewById(R.id.ivPFP);
         btnLogout = (Button) view.findViewById(R.id.btnLogout);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
+        pbLoading.setVisibility(View.GONE); // Hide at first
         skip = 0;
 
         // Show the logout button if it's the current user
@@ -145,7 +149,8 @@ public class ProfileFragment extends Fragment {
             public void onRefresh() {
                 adapter.clear();
                 skip = 0;
-                queryPosts();
+                pbLoading.setVisibility(View.VISIBLE); // Show loading bar
+                queryPosts(0);
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -158,7 +163,8 @@ public class ProfileFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                queryPosts();
+                pbLoading.setVisibility(View.VISIBLE); // Show loading bar
+                queryPosts(page);
             }
         };
         // Adds the scroll listener to RecyclerView
@@ -177,14 +183,15 @@ public class ProfileFragment extends Fragment {
         });
 
         // Get posts
-        queryPosts();
+        pbLoading.setVisibility(View.VISIBLE); // Show loading bar
+        queryPosts(0);
     }
 
     // Query posts from database
-    protected void queryPosts() {
+    protected void queryPosts(int page) {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
-        query.setSkip(skip);
+        query.setSkip(20 * page);
         query.whereEqualTo(Post.KEY_USER, user);
         query.setLimit(20); // Only show 20 posts
         query.addDescendingOrder(Post.KEY_CREATED_AT);
@@ -199,7 +206,7 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "Query posts success!");
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
-                skip += posts.size(); // Skip the next values next time
+                pbLoading.setVisibility(View.GONE); // Hide at first
             }
         });
     }

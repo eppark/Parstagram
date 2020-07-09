@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -52,6 +54,7 @@ public class ComposeFragment extends Fragment {
     private static final int PERMISSION_REQUEST_CODE = 40;
     private EditText etDescription;
     private Button btnCaptureImage;
+    private Button btnGalleryImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
     private ProgressBar pbLoading;
@@ -85,11 +88,15 @@ public class ComposeFragment extends Fragment {
         // Setup handles to view objects
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
+        btnGalleryImage = (Button) view.findViewById(R.id.btnGalleryImage);
         ivPostImage = (ImageView) view.findViewById(R.id.ivImage);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
         pbLoading.setVisibility(View.INVISIBLE); // Hide the progress bar at first
+        // Create a File reference for future access
+        photoFile = getPhotoFileUri(photoFileName);
 
+        // Submit the post by saving to Parse
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,14 +115,24 @@ public class ComposeFragment extends Fragment {
             }
         });
 
+        // Set the button to launch the camera
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchCamera();
             }
         });
+
+        // Set the button to launch the gallery picker
+        btnGalleryImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onPickPhoto();
+            }
+        });
     }
 
+    // Launch the camera
     private void launchCamera() {
         if (!checkPermission()) {
             requestPermission();
@@ -123,33 +140,34 @@ public class ComposeFragment extends Fragment {
 
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
-        photoFile = getPhotoFileUri(photoFileName);
 
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.parstagram.fileprovider", photoFile);
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, fileProvider);
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
+    // Trigger gallery selection for a photo
+    public void onPickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_PHOTO_CODE);
+    }
+
+    // Check we have camera permissions
     private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
             return false;
         }
         return true;
     }
 
+    // Check we have request permissions
     private void requestPermission() {
-
-        ActivityCompat.requestPermissions(getActivity(),
-                new String[]{Manifest.permission.CAMERA},
-                PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
     }
 
     @Override
@@ -158,13 +176,10 @@ public class ComposeFragment extends Fragment {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
-
-                    // main logic
                 } else {
                     Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
-                                != PackageManager.PERMISSION_GRANTED) {
+                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                             showMessageOKCancel("You need to allow access permissions",
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -190,7 +205,26 @@ public class ComposeFragment extends Fragment {
                 .show();
     }
 
+    // Load a Bitmap from a URI
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if(Build.VERSION.SDK_INT > 27){
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 
+    // Check whether we returned from a camera activity or gallery activity and act accordingly
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -204,6 +238,26 @@ public class ComposeFragment extends Fragment {
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
+        } else if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            if (resultCode == RESULT_OK) {
+                Uri photoUri = data.getData();
+
+                // Load the image located at photoUri into selectedImage
+                Bitmap selectedImage = loadFromUri(photoUri);
+
+                // Save as a file
+                FileOutputStream outStream = null;
+                try {
+                    outStream = new FileOutputStream(photoFile.getAbsolutePath());
+                    selectedImage.compress(Bitmap.CompressFormat.PNG, 50, outStream);
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "Gallery image save error" + e);
+                }
+                // Load the selected image into a preview
+                ivPostImage.setImageBitmap(selectedImage);
+            } else { // Result was a failure
+                Toast.makeText(getContext(), "Picture wasn't selected!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -215,14 +269,14 @@ public class ComposeFragment extends Fragment {
         File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d(TAG, "failed to create directory");
         }
 
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
-    
+
     // Save the post to Parse
     private void savePost(String description, ParseUser currentUser, File photoFile) {
         pbLoading.setVisibility(View.VISIBLE);

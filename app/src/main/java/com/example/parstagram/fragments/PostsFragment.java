@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.parstagram.EndlessRecyclerViewScrollListener;
@@ -31,6 +32,7 @@ public class PostsFragment extends Fragment {
     protected RecyclerView rvPosts;
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
+    ProgressBar pbLoading;
 
     // Swipe to refresh and endless scrolling
     private SwipeRefreshLayout swipeContainer;
@@ -57,6 +59,8 @@ public class PostsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = (RecyclerView) view.findViewById(R.id.rvPosts);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
+        pbLoading.setVisibility(View.GONE); // Hide progress bar at first
 
         // Set posts, adapter, and layout
         allPosts = new ArrayList<>();
@@ -71,6 +75,7 @@ public class PostsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 adapter.clear();
+                pbLoading.setVisibility(View.VISIBLE); // Show progress bar
                 queryPosts(0);
                 swipeContainer.setRefreshing(false);
             }
@@ -82,6 +87,7 @@ public class PostsFragment extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                pbLoading.setVisibility(View.VISIBLE); // Show progress bar
                 queryPosts(page);
             }
         };
@@ -89,6 +95,7 @@ public class PostsFragment extends Fragment {
         rvPosts.addOnScrollListener(scrollListener);
 
         // Get posts initially
+        pbLoading.setVisibility(View.VISIBLE); // Show progress bar
         queryPosts(0);
     }
 
@@ -110,6 +117,7 @@ public class PostsFragment extends Fragment {
                 Log.d(TAG, "Query posts success!");
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                pbLoading.setVisibility(View.GONE); // Hide progress bar
             }
         });
     }

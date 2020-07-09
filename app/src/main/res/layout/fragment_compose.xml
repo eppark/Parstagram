@@ -20,6 +20,12 @@
         android:layout_height="wrap_content"
         android:text="@string/take_a_photo" />
 
+    <Button
+        android:id="@+id/btnGalleryImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pick from Gallery" />
+
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"

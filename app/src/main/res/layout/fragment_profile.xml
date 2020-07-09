@@ -33,10 +33,19 @@
                     android:layout_below="@+id/ivPFP"
                     android:layout_marginTop="16dp">
 
+                    <ProgressBar
+                        android:id="@+id/pbLoading"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:visibility="visible" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvPosts"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
+
                 </FrameLayout>
 
                 <TextView

@@ -69,4 +69,14 @@
         android:textAppearance="@style/InstagramTextAppearance"
         android:textSize="56dp" />
 
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:progressTint="@color/InstagramBlue"
+        tools:visibility="visible" />
+
 </RelativeLayout>

@@ -109,6 +109,7 @@ public class DetailsFragment extends Fragment {
         tvComments = (TextView) view.findViewById(R.id.tvComments);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
 
+        // Get the post details
         post = Parcels.unwrap(getArguments().getParcelable("post"));
         ParseUser op = post.getUser();
 
