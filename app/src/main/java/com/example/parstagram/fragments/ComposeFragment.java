@@ -48,6 +48,7 @@ public class ComposeFragment extends Fragment {
 
     public static final String TAG = ComposeFragment.class.getSimpleName();
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    public final static int PICK_PHOTO_CODE = 46;
     private static final int PERMISSION_REQUEST_CODE = 40;
     private EditText etDescription;
     private Button btnCaptureImage;
@@ -221,14 +222,14 @@ public class ComposeFragment extends Fragment {
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
-
+    
+    // Save the post to Parse
     private void savePost(String description, ParseUser currentUser, File photoFile) {
         pbLoading.setVisibility(View.VISIBLE);
         Post post = new Post();
         post.setDescription(description);
         post.setUser(currentUser);
         post.setImage(new ParseFile(photoFile));
-        post.resetLikes();
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

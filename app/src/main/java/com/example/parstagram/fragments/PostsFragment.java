@@ -31,7 +31,6 @@ public class PostsFragment extends Fragment {
     protected RecyclerView rvPosts;
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
-    int skip;
 
     // Swipe to refresh and endless scrolling
     private SwipeRefreshLayout swipeContainer;
@@ -65,7 +64,6 @@ public class PostsFragment extends Fragment {
         rvPosts.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvPosts.setLayoutManager(linearLayoutManager);
-        skip = 0;
 
         // Set the refresher
         // Setup refresh listener which triggers new data loading
@@ -73,8 +71,7 @@ public class PostsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 adapter.clear();
-                skip = 0;
-                queryPosts();
+                queryPosts(0);
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -85,23 +82,21 @@ public class PostsFragment extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                queryPosts();
+                queryPosts(page);
             }
         };
         // Adds the scroll listener to RecyclerView
         rvPosts.addOnScrollListener(scrollListener);
 
         // Get posts initially
-        queryPosts();
+        queryPosts(0);
     }
 
     // Query posts from database
-    protected void queryPosts() {
+    protected void queryPosts(int page) {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
-        query.setSkip(skip);
+        query.setSkip(20 * page);
         query.setLimit(20); // Only show 20 posts
         query.addDescendingOrder(Post.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
@@ -115,7 +110,6 @@ public class PostsFragment extends Fragment {
                 Log.d(TAG, "Query posts success!");
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
-                skip += posts.size(); // Skip the next values next time
             }
         });
     }

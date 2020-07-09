@@ -38,6 +38,9 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +61,9 @@ public class DetailsFragment extends Fragment {
     ImageView ivImage;
     ImageButton ibtnLike;
     ImageButton ibtnComment;
-    int skip;
+    TextView tvLikes;
+    TextView tvComments;
+    int likes;
     boolean liked;
 
     // Swipe to refresh and scroll to load more comments endlessly
@@ -100,8 +105,9 @@ public class DetailsFragment extends Fragment {
         ivImage = (ImageView) view.findViewById(R.id.ivImage);
         ibtnComment = (ImageButton) view.findViewById(R.id.ibtnComment);
         ibtnLike = (ImageButton) view.findViewById(R.id.ibtnLike);
+        tvLikes = (TextView) view.findViewById(R.id.tvLikes);
+        tvComments = (TextView) view.findViewById(R.id.tvComments);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        skip = 0;
 
         post = Parcels.unwrap(getArguments().getParcelable("post"));
         ParseUser op = post.getUser();
@@ -152,8 +158,8 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 adapter.clear();
-                skip = 0;
-                queryComments();
+                Log.d(TAG, "Querying for refresh ");
+                queryComments(0);
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -166,11 +172,34 @@ public class DetailsFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                queryComments();
+                Log.d(TAG, "Querying for load more ");
+                queryComments(page);
             }
         };
         // Adds the scroll listener to RecyclerView
         rvComments.addOnScrollListener(scrollListener);
+
+        // Get comments
+        Log.d(TAG, "Querying for initial retrieval ");
+        queryComments(0);
+
+        // See if the user liked the post
+        liked = false;
+        queryLiked();
+
+        // When the user clicks the heart, change accordingly
+        ibtnLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!liked) {
+                    post.addLike();
+                    addLike();
+                } else {
+                    post.removeLike();
+                    removeLike();
+                }
+            }
+        });
 
         // Set comment listener
         ibtnComment.setOnClickListener(new View.OnClickListener() {
@@ -180,22 +209,13 @@ public class DetailsFragment extends Fragment {
                 commentDialogFragment.show(((MainActivity) view.getContext()).fragmentManager, "fragment_comment_dialog");
             }
         });
-
-        // Get comments
-        if (allComments.isEmpty()) {
-            queryComments();
-        }
-
-        // See if the user liked the post
-        liked = false;
-        queryLiked();
     }
 
     // Query comments from database
-    protected void queryComments() {
+    protected void queryComments(int page) {
         ParseQuery<Comment> query = ParseQuery.getQuery(Comment.class);
         query.include(Comment.KEY_USER);
-        query.setSkip(skip);
+        query.setSkip(20 * page);
         query.whereEqualTo(Comment.KEY_OPOST, post);
         query.setLimit(20); // Only show 20 comments
         query.addDescendingOrder(Comment.KEY_CREATED_AT);
@@ -213,9 +233,18 @@ public class DetailsFragment extends Fragment {
                 allComments.clear();
                 allComments.addAll(temp); // Remove duplicates
                 adapter.notifyDataSetChanged();
-                skip += comments.size(); // Skip the next values next time
+                setCommentCount();
             }
         });
+    }
+
+    // Set the count number of comments
+    public void setCommentCount() {
+        if (allComments.size() > 0) {
+            tvComments.setText(format(allComments.size()));
+        } else {
+            tvComments.setText("");
+        }
     }
 
     // Query if the post is liked from database
@@ -231,6 +260,12 @@ public class DetailsFragment extends Fragment {
                 Log.d(TAG, "Query likes success!");
                 // If the user liked the post, show that. Otherwise, show the post is not liked
                 removeLike();
+                likes = users.size();
+                if (likes > 0) {
+                    tvLikes.setText(format(likes));
+                } else {
+                    tvLikes.setText("");
+                }
                 for(int i = 0; i < users.size(); i++) {
                     if(users.get(i).getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
                         addLike();
@@ -251,5 +286,31 @@ public class DetailsFragment extends Fragment {
         liked = false;
         ibtnLike.setSelected(false);
         ibtnLike.setImageResource(R.drawable.ufi_heart);
+    }
+
+    // Truncate counts in a readable format
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String format(long value) {
+        if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + format(-value);
+        if (value < 1000) return Long.toString(value);
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10);
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 }

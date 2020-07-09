@@ -59,7 +59,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
             View.OnClickListener detailsListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity) context).fragmentManager.beginTransaction().replace(R.id.flContainer, DetailsFragment.newInstance(currentPost)).commit();
+                    ((MainActivity) context).fragmentManager.beginTransaction().replace(R.id.flContainer, DetailsFragment.newInstance(currentPost), "DETAILS_TAG").commit();
                 }
             };
             ivImage.setOnClickListener(detailsListener);

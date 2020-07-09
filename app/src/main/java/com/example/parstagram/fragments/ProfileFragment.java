@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.parstagram.BitmapScaler;
 import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.adapters.ImagesAdapter;
@@ -47,10 +46,7 @@ import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -281,7 +277,6 @@ public class ProfileFragment extends Fragment {
                 .create()
                 .show();
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

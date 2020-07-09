@@ -66,7 +66,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_below="@+id/ivImage"
-                    android:layout_marginStart="0dp"
+                    android:layout_marginStart="36dp"
                     android:layout_marginTop="8dp"
                     android:layout_toEndOf="@+id/ibtnLike"
                     android:backgroundTint="#00FFFFFF"
@@ -79,7 +79,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_below="@+id/ivImage"
-                    android:layout_marginStart="0dp"
+                    android:layout_marginStart="36dp"
                     android:layout_marginTop="8dp"
                     android:layout_toEndOf="@id/ibtnComment"
                     android:backgroundTint="#00FFFFFF"
@@ -125,6 +125,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/divider" />
+
+                <TextView
+                    android:id="@+id/tvLikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivImage"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_toEndOf="@+id/ibtnLike"
+                    tools:text="164m" />
+
+                <TextView
+                    android:id="@+id/tvComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivImage"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_toEndOf="@+id/ibtnComment"
+                    tools:text="256" />
 
 
             </RelativeLayout>

@@ -55,8 +55,4 @@ public class Post extends ParseObject {
         getLikes().remove(ParseUser.getCurrentUser());
         saveInBackground();
     }
-
-    public void resetLikes() {
-        put(KEY_LIKES, new ParseRelation[0]);
-    }
 }

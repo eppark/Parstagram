@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
     // When returning from the comment dialog, show it on the feed
     @Override
     public void onFinishCommentDialog(Comment comment) {
-        ((DetailsFragment) fragmentManager.getFragments().get(1)).allComments.add(0, comment);
-        ((DetailsFragment) fragmentManager.getFragments().get(1)).adapter.notifyDataSetChanged();
+        ((DetailsFragment) fragmentManager.findFragmentByTag("DETAILS_TAG")).allComments.add(0, comment);
+        ((DetailsFragment) fragmentManager.findFragmentByTag("DETAILS_TAG")).adapter.notifyDataSetChanged();
     }
 }
