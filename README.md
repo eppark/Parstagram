@@ -31,7 +31,7 @@ The following **stretch** features are implemented:
   - [x] Tapping on a post's username or profile photo goes to that user's profile page
   - [x] User Profile shows posts in a grid view
 - [x] User can comment on a post and see all comments for each post in the post details screen.
-- [ ] User can like a post and see number of likes for each post in the post details screen.
+- [x] User can like a post and see number of likes for each post in the post details screen.
 
 The following **additional** features are implemented:
 
@@ -39,11 +39,13 @@ The following **additional** features are implemented:
 - [x] User can pull to refresh the last 20 comments on a post in its details
 - [x] User can load more comments once he or she reaches the bottom of the post details page using endless scrolling.
 - [x] User can post a comment via dialog fragment
+- [x] User can select an image from the gallery instead of taking a photo with the camera
+- [x] Users can see if they liked the image
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1.
-2.
+1. I used a ParseRelation to keep track of users who liked the image so that it would show up with a filled heart on the UI. When should we use a ParseRelation versus an Array, since a ParseRelation is essentially an array?
+2. What would be a good way to extend the app for direct messaging capabilities?
 
 ## Video Walkthrough
 
