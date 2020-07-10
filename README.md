@@ -35,12 +35,14 @@ The following **stretch** features are implemented:
 
 The following **additional** features are implemented:
 
-- [x] Users can tap a post on a profile page to see its details.
+- [x] Users can tap a post on a profile page to see its details
 - [x] User can pull to refresh the last 20 comments on a post in its details
 - [x] User can load more comments once he or she reaches the bottom of the post details page using endless scrolling.
 - [x] User can post a comment via dialog fragment
 - [x] User can select an image from the gallery instead of taking a photo with the camera
 - [x] Users can see if they liked the image
+- [x] Users can delete a comment by long-clicking
+- [x] Users can send direct messages 1-on-1 with other users
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
