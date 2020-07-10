@@ -49,9 +49,15 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories:
+Here's some walkthroughs of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+All MVP goals were reached.
+
+![App Demo MVP Link](walkthroughs/walkthroughmvp.gif)
+
+All stretch goals were reached. Users can also use a direct messaging feature.
+
+![App Demo Stretch Link](walkthroughs/walkthroughstretch.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
