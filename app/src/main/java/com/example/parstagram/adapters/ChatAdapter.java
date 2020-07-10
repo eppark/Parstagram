@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
 import com.example.parstagram.models.Message;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -75,12 +77,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             }
 
             final ImageView profileView = isMe ? imageMe : imageOther;
-            ParseFile image = message.getSender().getParseFile("pfp");
-            if (image != null) {
-                Glide.with(mContext).load(image.getUrl()).circleCrop().into(profileView);
-            } else {
-                Glide.with(mContext).load(R.drawable.default_pfp).circleCrop().into(profileView);
-            }
+            message.getSender().fetchIfNeededInBackground(new GetCallback<ParseUser>() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    ParseFile image = user.getParseFile("pfp");
+                    if (image != null) {
+                        Glide.with(mContext).load(image.getUrl()).circleCrop().into(profileView);
+                    } else {
+                        Glide.with(mContext).load(R.drawable.default_pfp).circleCrop().into(profileView);
+                    }
+                }
+            });
             body.setText(message.getDescription());
         }
     }

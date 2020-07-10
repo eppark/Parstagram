@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.parstagram.R;
 import com.example.parstagram.adapters.ChatAdapter;
 import com.example.parstagram.databinding.ActivityChatBinding;
-import com.example.parstagram.models.Comment;
+import com.example.parstagram.models.DM;
 import com.example.parstagram.models.Message;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -33,6 +33,7 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Message> mMessages;
     ChatAdapter mAdapter;
     ParseUser receiver;
+    public DM currentDm;
 
     // keep track of initial load to scroll to bottom of the view
     boolean mFirstLoad;
@@ -51,8 +52,9 @@ public class ChatActivity extends AppCompatActivity {
         binding.toolbar.setTitle("Instagram");
         mFirstLoad = true;
 
-        // Set user info
+        // Set user and DM info
         receiver = (ParseUser) Parcels.unwrap(getIntent().getParcelableExtra("receiver"));
+        currentDm = (DM) Parcels.unwrap(getIntent().getParcelableExtra("dm"));
 
         // Setup adapter
         mMessages = new ArrayList<>();
@@ -64,19 +66,20 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager.setReverseLayout(true);
         binding.rvChat.setLayoutManager(linearLayoutManager);
 
-        // Set up messages and refreshes
+        // Set up messages and refreshing
         setupMessagePosting();
         myHandler.postDelayed(mRefreshMessagesRunnable, POLL_INTERVAL);
     }
 
+
     // Setup button event handler which posts the entered message to Parse
-    void setupMessagePosting() {
+    private void setupMessagePosting() {
         // When send button is clicked, create message object on Parse
         binding.btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String description = binding.etMessage.getText().toString();
-                Message message = new Message();
+                final Message message = new Message();
                 message.setDescription(description);
                 message.setReceiver(receiver);
                 message.setSender(ParseUser.getCurrentUser());
@@ -89,6 +92,8 @@ public class ChatActivity extends AppCompatActivity {
                             return;
                         }
                         Log.i(TAG, "Message save success!");
+                        currentDm.getRelation(DM.KEY_MESSAGES).add(message);
+                        currentDm.saveInBackground();
                         refreshMessages();
                     }
                 });
@@ -98,44 +103,20 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     // Query messages from Parse so we can load them into the chat adapter
-    void refreshMessages() {
-        /*// Get messages from database that has the current user as the sender or the receiver
-        ParseQuery<Message> senderQuery = ParseQuery.getQuery(Message.class);
-        senderQuery.whereEqualTo(Message.KEY_SENDER, ParseUser.getCurrentUser());
-        ParseQuery<Message> receiverQuery = ParseQuery.getQuery(Message.class);
-        receiverQuery.whereEqualTo(Message.KEY_RECEIVER, ParseUser.getCurrentUser());
-
-        List<ParseQuery<Message>> currentQueries = new ArrayList<ParseQuery<Message>>();
-        currentQueries.add(senderQuery);
-        currentQueries.add(receiverQuery);
-        ParseQuery<Message> currentUserQuery = ParseQuery.or(currentQueries);
-
-        // Get messages from database that has the receiver as the sender or receiver
-        ParseQuery<Message> senderQuery2 = ParseQuery.getQuery(Message.class);
-        senderQuery2.whereEqualTo(Message.KEY_SENDER, receiver);
-        ParseQuery<Message> receiverQuery2 = ParseQuery.getQuery(Message.class);
-        receiverQuery2.whereEqualTo(Message.KEY_RECEIVER, receiver);
-
-        List<ParseQuery<Message>> receiverQueries = new ArrayList<ParseQuery<Message>>();
-        receiverQueries.add(senderQuery);
-        receiverQueries.add(receiverQuery);
-        ParseQuery<Message> receiverUserQuery = ParseQuery.or(receiverQueries);
-*/
-        // Now combine the two together
-        ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
-
-        query.include(Message.KEY_RECEIVER);
-        query.include(Message.KEY_SENDER);
+    private void refreshMessages() {
+        // Get messages from this DM
+        ParseQuery<ParseObject> query = currentDm.getRelation(DM.KEY_MESSAGES).getQuery();
+        query.include(DM.KEY_USERS);
         query.setLimit(20); // Only show 20 messages
         // get the latest 20 messages, order will show up newest to oldest of this group
         query.orderByDescending("createdAt");
         // Execute query to fetch all messages from Parse asynchronously
         // This is equivalent to a SELECT query with SQL
-        query.findInBackground(new FindCallback<Message>() {
-            public void done(List<Message> messages, ParseException e) {
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> messages, ParseException e) {
                 if (e == null) {
                     mMessages.clear();
-                    mMessages.addAll(messages);
+                    mMessages.addAll((List<Message>)(Object) messages);
                     mAdapter.notifyDataSetChanged(); // update adapter
                     // Scroll to the bottom of the list on initial load
                     if (mFirstLoad) {

@@ -10,13 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.parstagram.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.helpers.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.R;
 import com.example.parstagram.adapters.MessagesAdapter;
-import com.example.parstagram.databinding.ActivityMainBinding;
 import com.example.parstagram.databinding.ActivityMessagesBinding;
-import com.example.parstagram.models.Message;
-import com.example.parstagram.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;

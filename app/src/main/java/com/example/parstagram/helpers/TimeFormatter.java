@@ -1,4 +1,4 @@
-package com.example.parstagram;
+package com.example.parstagram.helpers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -3,6 +3,7 @@ package com.example.parstagram;
 import android.app.Application;
 
 import com.example.parstagram.models.Comment;
+import com.example.parstagram.models.DM;
 import com.example.parstagram.models.Message;
 import com.example.parstagram.models.Post;
 import com.parse.Parse;
@@ -17,6 +18,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(Comment.class);
         ParseObject.registerSubclass(Message.class);
+        ParseObject.registerSubclass(DM.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

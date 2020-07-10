@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
-import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.models.Comment;
 import com.example.parstagram.models.Post;
 import com.parse.ParseException;

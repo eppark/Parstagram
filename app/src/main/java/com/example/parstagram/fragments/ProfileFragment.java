@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.parstagram.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.helpers.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.adapters.ImagesAdapter;
 import com.example.parstagram.models.Post;

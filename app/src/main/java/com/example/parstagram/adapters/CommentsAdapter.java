@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
-import com.example.parstagram.TimeFormatter;
+import com.example.parstagram.helpers.TimeFormatter;
 import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
@@ -104,7 +104,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
                     ((MainActivity) context).fragmentManager.beginTransaction().replace(R.id.flContainer, ProfileFragment.newInstance(comment.getUser())).commit();
                 }
             };
-            tvUsername.setOnClickListener(profileListener);
             ivPFP.setOnClickListener(profileListener);
         }
 

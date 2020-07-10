@@ -14,8 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.parstagram.EndlessRecyclerViewScrollListener;
-import com.example.parstagram.activities.MainActivity;
+import com.example.parstagram.helpers.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.adapters.PostsAdapter;
 import com.example.parstagram.R;

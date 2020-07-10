@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.parstagram.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.helpers.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.R;
-import com.example.parstagram.TimeFormatter;
+import com.example.parstagram.helpers.TimeFormatter;
 import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.adapters.CommentsAdapter;
 import com.example.parstagram.models.Comment;
