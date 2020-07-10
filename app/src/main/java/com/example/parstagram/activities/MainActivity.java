@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -73,5 +75,19 @@ public class MainActivity extends AppCompatActivity implements CommentDialogFrag
     public void onFinishCommentDialog(Comment comment) {
         ((DetailsFragment) fragmentManager.findFragmentByTag("DETAILS_TAG")).allComments.add(0, comment);
         ((DetailsFragment) fragmentManager.findFragmentByTag("DETAILS_TAG")).adapter.notifyDataSetChanged();
+    }
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    // Take the user to the messages page
+    public void onMessagesAction(MenuItem item) {
+        Intent intent = new Intent(MainActivity.this, MessagesActivity.class);
+        startActivity(intent);
     }
 }

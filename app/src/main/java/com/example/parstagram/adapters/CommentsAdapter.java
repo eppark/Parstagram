@@ -22,7 +22,6 @@ import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.fragments.DetailsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Comment;
-import com.example.parstagram.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;

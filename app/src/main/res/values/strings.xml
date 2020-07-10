@@ -14,5 +14,10 @@
     <string name="comment">Comment...</string>
     <string name="post">Post</string>
     <string name="instagram">Instagram</string>
+    <string name="messages">Messages</string>
+    <string name="send">SEND</string>
+    <string name="message_hint">Message...</string>
+    <string name="profile_me">My PFP</string>
+    <string name="profile_other">Other PFP</string>
 
 </resources>
