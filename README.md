@@ -72,7 +72,7 @@ List an 3rd party libraries, icons, graphics, or other assets you used in your a
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Took some time implementing the direct messages feature, but eventually got it working.
 
 ## License
 
